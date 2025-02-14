@@ -1,14 +1,15 @@
 from decorators.create_session import create_session
 from sqlmodel import Session, select
 from models.user import User
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Response
 import jwt
+from enums.roles import UserRoleEnum
 
 class SignInService:
 
     @staticmethod
     @create_session
-    def sign_in(session: Session, email: str, password: str, request: Request) -> dict:
+    def signin(session: Session, email: str, password: str, response: Response) -> dict:
         query = select(User).where(User.email == email)
         
         user = session.exec(query).first()
@@ -20,12 +21,12 @@ class SignInService:
 
         user_identifier = SignInService.create_token(user)
 
-        request.headers["Authorization"] = f"Bearer {user_identifier}"
+        response.set_cookie(key="access_token", value=user_identifier)
 
         return {"message": "User logged in"}
     
     @staticmethod
     def create_token(user: User) -> dict:
-        encoded_jwt = jwt.encode(user.model_dump(), "secret", algorithm="HS256")
+        encoded_jwt = jwt.encode({"user_email": user.email, "user_id": user.id, "role": "USER"}, "secret", algorithm="HS256")
         
         return encoded_jwt

@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, create_engine, Session
 from models.user import User
 
-DATABASE_URL = "sqlite3:///users.db"  
+DATABASE_URL = "sqlite:///users.db"  
 
 
 engine = create_engine(DATABASE_URL, echo=True)
