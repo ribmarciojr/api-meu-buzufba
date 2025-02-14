@@ -6,8 +6,9 @@ import json
 auth_router = APIRouter(prefix="/auth")
 
 
-@auth_router.post("/login")
+@auth_router.post("/signin")
 def signin(user_payload: SignInSchema):
     response = SignInService.sign_in(user_payload.email, user_payload.password)
 
     return json.dumps(response)
+
